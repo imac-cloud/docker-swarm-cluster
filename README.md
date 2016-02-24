@@ -37,16 +37,16 @@ $ docker run --rm swarm create
 開啟 node 節點的 terminal ，透過下列指令執行 swarm image 並將 swarm manager 與節點連結，建立 swarm 與 node 之間溝通通道：
 
 ```
-$ docker run -d swarm join --addr=<node_ip:2375> token://<cluster_id>
+$ docker run -d swarm join --addr=192.168.100.84:2375 token://<cluster_id>
 ```
 
-> + node\_ip 為該節點 IP ， cluster_id 為前一步驟所產生的 ID。
-> + 這個命令每個節點皆需執行，否則 master 無法取得該節點資訊。
+> + cluster_id 為前一步驟所產生的 ID。
+> + 這個命令每個 nodes 皆需執行，否則 master 無法取得該節點資訊。
 
 開啟 `/etc/default/docker` 並將下列程式碼於檔案最下方加入：
 
 ```
-DOCKER_OPTS="-H <node_ip:2375> -H unix:///var/run/docker.sock"
+DOCKER_OPTS="-H 192.168.100.84:2375 -H unix:///var/run/docker.sock"
 ```
 
 #### master:
@@ -54,10 +54,8 @@ DOCKER_OPTS="-H <node_ip:2375> -H unix:///var/run/docker.sock"
 最後，回到 master 執行下列指令：
 
 ```
-docker run -t -p <swarm_port>:2375 -t swarm manage token://<cluster_id>
+docker run -t -p 2375:2375 -t swarm manage token://<cluster_id>
 ```
-
-> swarm_port 為 master 節點 IP
 
 安裝完成以後，可以透過 `info` 指令觀看所有 nodes 狀況：
 
@@ -101,7 +99,7 @@ Total Memory: 8.107 GiB
 Name: d7ca6a4fdc10
 ```
 
-> 其他相關指令： <br />
+> 可以從 docker hub 取得更多 [swarm](https://hub.docker.com/_/swarm/) 相關指令： <br />
 > $ docker -H tcp://\<swarm_ip:swarm_port\> run ...<br />
 > $ docker -H tcp://\<swarm_ip:swarm_port\> ps ...<br />
 > $ docker -H tcp://\<swarm_ip:swarm_port\> logs ...<br />
@@ -132,7 +130,8 @@ server {
 ...
 ```
 
-> 這個部分需要注意， upstream nodes 加在 server 外，proxy_pass 加在 server 中的 location / ，而 server 與 location / 為原本檔案所設置，並非另外加入。 
+> + 這個部分需要特別注意， upstream nodes 加在 server 外，proxy_pass 加在 server 中的 location / ，而 server 與 location / 為原本檔案所設置，並非另外加入。 
+> + nginx 預設 load balancing 演算法為 round robin ，也可以透過上述方式調整每個 nodes 所分配到的權重。
 
 最後，將測試網頁透過 master 安裝在 node 上。
 
@@ -149,3 +148,5 @@ docker -H :2375 run -d -p 8080:80 cijie/haproxy-web-example:1.0.0
 (重新整理)
 
 ![](./screenshots/second.png)
+
+> 系統會依照你所設定的 nodes 與分配的權重自動將請求導向個節點。
