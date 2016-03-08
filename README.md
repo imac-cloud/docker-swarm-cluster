@@ -15,7 +15,6 @@ Docker Swarm 是 Docker 官方在2014年12月初發佈的一套管理 Docker 叢
 
 > 這個部份 master 為主要控制節點，node 為應用程式工作節點。
 
-#### master:
 
 首先，安裝 docker 環境，可以透過執行 `install.sh` 安裝。
 
@@ -24,13 +23,16 @@ $ ./install.sh
 ```
 > 若已經安裝過 docker 環境，請忽略此步驟。
 
+#### master:
+
 接下來，先利用下列指令，建立一個 docker-swarm 叢集：
 
 ```
 $ docker run --rm swarm create
 ```
 
-> 這個步驟完成以後，系統會顯示一組 cluster id ，請記錄下來，以便後續步驟所使用。
+> * 這個步驟完成以後，系統會顯示一組 cluster id ，請記錄下來，以便後續步驟所使用。
+> * 若出現 Cannot connect to the Docker daemon. Is the docker daemon running on this host? 訊息，請使用 sudo usermod -aG docker ubuntu 指令並退出 instance 重新進入即可。
 
 #### node:
 
