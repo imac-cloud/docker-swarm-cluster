@@ -51,12 +51,25 @@ $ docker run -d swarm join --addr=192.168.100.84:2375 token://<cluster_id>
 DOCKER_OPTS="-H 192.168.100.84:2375 -H unix:///var/run/docker.sock"
 ```
 
+存檔後，重新啟動 docker:
+
+```
+$ sudo start docker
+```
+
+並且將原本執行的 container 啟動起來:
+
+```
+$ docker start <container_id>
+```
+> 若不知道 <container_id> ，可以夠過 ` $ docker ps -al` 指令尋找。
+
 #### master:
 
 最後，回到 master 執行下列指令：
 
 ```
-docker run -t -p 2375:2375 -t swarm manage token://<cluster_id>
+$ docker run -t -p 2375:2375 -t swarm manage token://<cluster_id>
 ```
 
 安裝完成以後，可以透過 `info` 指令觀看所有 nodes 狀況：
@@ -113,7 +126,7 @@ Name: d7ca6a4fdc10
 首先，安裝 Nginx 套件：
 
 ```
-sudo apt-get install nginx
+$ sudo apt-get install nginx
 ```
 
 接下來，將下列程式碼加入 `/etc/nginx/sites-enabled/default` 中：
@@ -138,7 +151,7 @@ server {
 最後，將測試網頁透過 master 安裝在 node 上。
 
 ```
-docker -H :2375 run -d -p 8080:80 cijie/haproxy-web-example:1.0.0
+$ docker -H :2375 run -d -p 8080:80 cijie/haproxy-web-example:1.0.0
 ```
 
 > 執行完後，可至該 node 上透過 `docker ps` 檢視 image。
