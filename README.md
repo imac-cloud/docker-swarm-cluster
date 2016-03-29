@@ -164,4 +164,4 @@ $ docker -H :2375 run -d -p 8080:80 cijie/haproxy-web-example:1.0.0
 
 ![](./screenshots/second.png)
 
-> 系統會依照你所設定的 nodes 與分配的權重自動將請求導向個節點。
+> 系統會依照你所設定的 nodes 與分配的權重自動將請求導向各節點。
